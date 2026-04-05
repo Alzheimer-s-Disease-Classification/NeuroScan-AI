@@ -15,7 +15,8 @@ The application is fully containerized with Docker and deployed live on Hugging 
 
 ## ⚙️ Technical Architecture
 * **Deep Learning Model:** Fine-tuned `ResNet50` architecture.
-* **Classification Stages:** * Mild Demented
+* **Classification Stages:**
+    * Mild Demented
     * Moderate Demented
     * Non-Demented
     * Very Mild Demented
