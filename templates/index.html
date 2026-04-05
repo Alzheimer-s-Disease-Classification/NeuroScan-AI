@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroScan AI | Alzheimer's Diagnostics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        .drag-active {
+            border-color: #4f46e5 !important;
+            background-color: #e0e7ff !important;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-100 to-indigo-50 min-h-screen flex flex-col text-slate-800">
+
+    <nav class="bg-white shadow-sm w-full py-4 px-8 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-brain text-indigo-600 text-3xl"></i>
+            <span class="text-2xl font-bold text-slate-800 tracking-tight">Neuro<span class="text-indigo-600">Scan</span> AI</span>
+        </div>
+        <div class="text-sm font-medium text-slate-500 border border-slate-200 py-1 px-3 rounded-full">
+            Research Preview 
+        </div>
+    </nav>
+
+    <main class="flex-grow flex items-center justify-center py-12 px-4">
+        <div class="max-w-5xl w-full glass-panel rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+            
+            <div class="bg-indigo-600 text-white p-10 text-center">
+                <h1 class="text-3xl font-bold mb-3">Multi-Stage Alzheimer's Detection</h1>
+                <p class="text-indigo-100 max-w-2xl mx-auto text-lg">
+                    Upload a scan. Our fine-tuned ResNet50 model will analyze the tissue structure and generate an explainable Grad-CAM heatmap instantly.
+                </p>
+            </div>
+
+            <div class="p-10">
+                <div id="drop-zone" class="border-4 border-dashed border-slate-300 rounded-2xl p-12 text-center transition-all duration-300 hover:bg-slate-50 relative group">
+                    <input type="file" id="imageInput" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*">
+                    <div class="pointer-events-none">
+                        <i class="fa-solid fa-cloud-arrow-up text-5xl text-indigo-400 mb-4 group-hover:-translate-y-2 transition-transform duration-300"></i>
+                        <h3 class="text-xl font-semibold text-slate-700 mb-1">Drag & Drop your scan here</h3>
+                        <p class="text-slate-500">or click to browse from your computer</p>
+                        <p class="text-xs text-slate-400 mt-4">Supports JPG, PNG, JPEG</p>
+                    </div>
+                </div>
+
+                <div id="loading" class="hidden flex flex-col items-center justify-center py-12">
+                    <i class="fa-solid fa-circle-notch fa-spin text-5xl text-indigo-600 mb-4"></i>
+                    <p class="text-lg font-semibold text-slate-700">Analyzing scan geometry...</p>
+                    <p class="text-sm text-slate-500">Generating XAI Heatmaps</p>
+                </div>
+
+                <div id="results" class="hidden mt-10 opacity-0 transition-opacity duration-500">
+                    
+                    <div class="bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-100 rounded-2xl p-8 mb-8 text-center shadow-sm">
+                        <p class="text-sm font-bold tracking-widest text-indigo-400 uppercase mb-2">AI Diagnosis</p>
+                        <h2 class="text-4xl font-black text-slate-800 mb-3"><span id="predClass" class="text-indigo-600"></span></h2>
+                        <div class="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-slate-100">
+                            <i class="fa-solid fa-chart-check text-emerald-500"></i>
+                            <span class="text-slate-600 font-medium">Confidence Score:</span>
+                            <span id="predConf" class="font-bold text-emerald-600 text-lg"></span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition">
+                            <h3 class="font-bold text-slate-700 mb-3 flex items-center gap-2">
+                                <i class="fa-regular fa-image text-slate-400"></i> Original scan
+                            </h3>
+                            <div class="bg-black rounded-lg overflow-hidden flex items-center justify-center aspect-square">
+                                <img id="origImg" class="max-w-full max-h-full object-contain" src="" alt="Original Scan">
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition">
+                            <h3 class="font-bold text-slate-700 mb-3 flex items-center gap-2">
+                                <i class="fa-solid fa-layer-group text-indigo-400"></i> Grad-CAM XAI Heatmap
+                            </h3>
+                            <div class="bg-black rounded-lg overflow-hidden flex items-center justify-center aspect-square relative">
+                                <img id="heatImg" class="max-w-full max-h-full object-contain" src="" alt="Heatmap Scan">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+                        <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info text-blue-500"></i> Clinical Interpretation Guide
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50">
+                                <div class="w-4 h-4 rounded-full bg-red-600 mt-1 shadow-sm shrink-0"></div>
+                                <div>
+                                    <p class="font-bold text-slate-700 text-sm">High Impact (Red)</p>
+                                    <p class="text-xs text-slate-500 mt-1">Primary regions driving the model's diagnostic decision.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50">
+                                <div class="w-4 h-4 rounded-full bg-yellow-400 mt-1 shadow-sm shrink-0"></div>
+                                <div>
+                                    <p class="font-bold text-slate-700 text-sm">Moderate Impact (Yellow)</p>
+                                    <p class="text-xs text-slate-500 mt-1">Secondary anatomical features contributing to the result.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 p-3 rounded-lg bg-slate-50">
+                                <div class="w-4 h-4 rounded-full bg-blue-600 mt-1 shadow-sm shrink-0"></div>
+                                <div>
+                                    <p class="font-bold text-slate-700 text-sm">Low Impact (Blue)</p>
+                                    <p class="text-xs text-slate-500 mt-1">Background or healthy tissue deemed irrelevant to the diagnosis.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-center py-6 text-slate-400 text-sm">
+        <p>Developed for Academic Research & Evaluation.</p>
+    </footer>
+
+    <script>
+        const fileInput = document.getElementById('imageInput');
+        const dropZone = document.getElementById('drop-zone');
+
+        // Handle Drag & Drop styling
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-active'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-active'), false);
+        });
+
+        // Trigger upload on file drop
+        dropZone.addEventListener('drop', function(e) {
+            let dt = e.dataTransfer;
+            let files = dt.files;
+            if(files.length > 0) {
+                fileInput.files = files; // Assign dropped files to input
+                submitForm();
+            }
+        });
+
+        // Trigger upload on click
+        fileInput.addEventListener('change', submitForm);
+
+        function submitForm() {
+            if (fileInput.files.length === 0) return;
+
+            // UI Transitions
+            document.getElementById('drop-zone').classList.add('hidden');
+            document.getElementById('results').classList.add('hidden');
+            document.getElementById('results').classList.remove('opacity-100');
+            document.getElementById('loading').classList.remove('hidden');
+
+            let formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            // Send to Flask Backend
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loading').classList.add('hidden');
+                
+                if (data.error) {
+                    alert(data.error);
+                    document.getElementById('drop-zone').classList.remove('hidden');
+                    return;
+                }
+
+                // Add spaces to class names for readability (e.g., "VeryMildDemented" -> "Very Mild Demented")
+                const formattedClass = data.class.replace(/([A-Z])/g, ' $1').trim();
+
+                // Populate Data
+                document.getElementById('predClass').innerText = formattedClass;
+                document.getElementById('predConf').innerText = data.confidence;
+                
+                // Add timestamp to force image refresh
+                const timeStr = new Date().getTime();
+                document.getElementById('origImg').src = "/" + data.original_image + "?t=" + timeStr;
+                document.getElementById('heatImg').src = "/" + data.heatmap_image + "?t=" + timeStr;
+                
+                // Reveal Results smoothly
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.classList.remove('hidden');
+                
+                // Small delay to allow display:block to apply before changing opacity
+                setTimeout(() => {
+                    resultsDiv.classList.add('opacity-100');
+                }, 50);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('drop-zone').classList.remove('hidden');
+                alert("An error occurred during prediction. Please try again.");
+            });
+        }
+    </script>
+</body>
+</html>
