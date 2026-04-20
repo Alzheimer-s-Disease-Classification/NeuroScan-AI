@@ -1,4 +1,4 @@
-# 🧠 NeuroScan AI: Multi-Stage Alzheimer's Detection
+#NeuroScan AI: Multi-Stage Alzheimer's Detection
 
 [![Hugging Face Space](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Live%20Demo-blue)](https://huggingface.co/spaces/sheema216/NeuroScan-AI)
 [![Python](https://img.shields.io/badge/Python-3.10-yellow)](https://www.python.org/)
@@ -9,11 +9,11 @@ NeuroScan AI is an Explainable Artificial Intelligence (XAI) web application des
 
 Instead of operating as a "black box," this tool generates **Grad-CAM heatmaps** to visually highlight the specific regions of the brain that the model analyzed to make its prediction, providing transparency and trust for medical professionals.
 
-## 🚀 Live Demo
+##Live Demo
 The application is fully containerized with Docker and deployed live on Hugging Face Spaces.
 **Try it here:** [NeuroScan AI on Hugging Face](https://huggingface.co/spaces/sheema216/NeuroScan-AI)
 
-## ⚙️ Technical Architecture
+##Technical Architecture
 * **Deep Learning Model:** Fine-tuned `ResNet50` architecture.
 * **Classification Stages:**
     * Mild Demented
@@ -24,7 +24,7 @@ The application is fully containerized with Docker and deployed live on Hugging 
 * **Backend:** Python & Flask.
 * **Deployment:** Docker, Git Large File Storage (LFS), Hugging Face Spaces.
 
-## 💻 Local Installation
+##Local Installation
 To run this project on your local machine:
 
 1. **Clone the repository:**
