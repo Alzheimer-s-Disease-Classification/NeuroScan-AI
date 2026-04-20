@@ -26,7 +26,12 @@ The application is fully containerized with Docker and deployed live on Hugging 
 
 ##Local Installation
 To run this project on your local machine:
+## Clone the Repository
 
+```bash
+git clone https://github.com/Alzheimer-s-Disease-Classification/NeuroScan-AI.git
+cd NeuroScan-AI
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
 Names of Contributors:
 Sheema Wani,
 Abesh Biswas, 
