@@ -1,4 +1,4 @@
-#NeuroScan AI: Multi-Stage Alzheimer's Detection
+#NeuroScan AI: Multi-Stage Alzheimer's Classification
 
 [![Hugging Face Space](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Live%20Demo-blue)](https://huggingface.co/spaces/sheema216/NeuroScan-AI)
 [![Python](https://img.shields.io/badge/Python-3.10-yellow)](https://www.python.org/)
