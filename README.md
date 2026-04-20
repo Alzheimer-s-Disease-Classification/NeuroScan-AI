@@ -28,6 +28,6 @@ The application is fully containerized with Docker and deployed live on Hugging 
 To run this project on your local machine:
 
 Names of Contributors:
-Sheema Wani
-Abesh Biswas 
-Zobia Riyaz
+Sheema Wani,
+Abesh Biswas, 
+Zobia Riyaz.
